@@ -1,0 +1,6 @@
+# Setup Environment variable
+#
+# Uncomment the below lines if the network needs proxy
+#HTTP_PROXY=<PROXY_IP:PORT>
+#HTTPS_PROXY=<PROXY_IP:PORT>
+#NO_PROXY=<NO_PROXY_IPS>,localhost

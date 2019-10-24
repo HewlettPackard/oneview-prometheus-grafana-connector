@@ -1,0 +1,40 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata: 
+  name: ingress-service
+  annotations:
+    kubernetes.io/ingress.class: nginx
+spec:
+  rules:
+    - host: grafana.local
+      http:
+        paths: 
+          - path: /grafana
+            backend: 
+              serviceName: grafana-ip-service
+              servicePort: 3000
+
+    - host: prometheus.local
+      http:
+        paths: 
+          - path: /prometheus
+            backend: 
+              serviceName: prometheus-service
+              servicePort: 9090
+
+    - host: grok-exporter.local
+      http:
+        paths: 
+          - path: /grok
+            backend: 
+              serviceName: exporter-service
+              servicePort: 9144
+
+    - host: log-generator.local
+      http:
+        paths: 
+          - path: /syslog
+            backend: 
+              serviceName: log-generator-service
+              servicePort: 8090
+

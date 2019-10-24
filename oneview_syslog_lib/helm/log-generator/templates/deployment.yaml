@@ -1,0 +1,81 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "log-generator.name" . }}
+  labels:
+{{ include "log-generator.labels" . | indent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ include "log-generator.name" . }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: {{ include "log-generator.name" . }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
+    spec:
+    {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+      volumes:
+        - name: oneview-pv-storage
+          persistentVolumeClaim:
+            claimName: oneview-pv-claim
+        - name: oneview-config-volume
+          configMap:
+            defaultMode: 420
+            name: oneview-conf
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.oneviewSyslog.repository }}:{{ .Values.oneviewSyslog.tag }}"
+          imagePullPolicy: {{ .Values.oneviewSyslog.pullPolicy }}
+          env:
+            - name: OV_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: oneview-secret
+                  key: password
+          #ports:
+          #  - name: http
+          #    containerPort: 8090
+          #    protocol: TCP
+          volumeMounts:
+          - mountPath: /plugin/logs
+            name: oneview-pv-storage
+          - mountPath: /conf
+            name: oneview-config-volume
+        - name: "{{ .Chart.Name }}-grok-exporter"
+          image: "{{ .Values.grokExporter.repository }}:{{ .Values.grokExporter.tag }}"
+          imagePullPolicy: {{ .Values.grokExporter.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: 9144
+              protocol: TCP
+          volumeMounts:
+            - name: oneview-pv-storage
+              mountPath: /grok/logs
+         #livenessProbe:
+         #  httpGet:
+         #    path: /
+         #    port: http
+         #readinessProbe:
+         #  httpGet:
+         #    path: /
+         #    port: http
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+    {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+    {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}

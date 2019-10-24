@@ -1,0 +1,89 @@
+O_TIMESTAMP %{YEAR:year}-%{MONTHNUM:month}-%{MONTHDAY:day}[T]%{HOUR:hour}:?%{MINUTE:minute}:?%{SECOND:second}[Z]
+O_EVENT_MSG %{GREEDYDATA}
+O_EVENT_EXTRA_MSG \[%{GREEDYDATA}\]
+O_RESOURCE_NAME  [a-zA-Z0-9_\,\-\s\/]+
+O_RESOURCE_TYPE  [a-zA-Z-]+
+O_IP_HOSTNAME    [a-z0-9.]+
+O_CHILD_ALERT    [0-9,]*
+O_SUPPORT_CONTACT [0-9a-zA-Z\s\,\@\.]+
+
+# Mapping of Error sequence in Oneview {'CRITICAL':2, 'ERROR': 3, 'WARNING':4, 'UNKNOWN': 5, 'OK':6, 'DEBUG':7}
+ONEVIEW_ALERT_SEQ   %{NUMBER:oneview_status_num}
+ONEVIEW_TIMESTAMP   %{O_TIMESTAMP:oneview_timestamp}
+ONEVIEW_HOSTNAME    %{O_IP_HOSTNAME:oneview_hostname}
+ONEVIEW_EVENT_STATE %{WORD:oneview_event_state}
+ONEVIEW_ALERT_URI   (%{URIPATH:oneview_alert_uri})
+ONEVIEW_EVENT_MSG   %{O_EVENT_MSG:oneview_msg}
+ONEVIEW_RESOURCE_TYPE %{O_RESOURCE_TYPE:oneview_resource_type}
+ONEVIEW_RESOURCE_NAME %{O_RESOURCE_NAME:oneview_resource_name}
+ONEVIEW_SERVICE_INFO  \{%{WORD:ov_support_case_id}\|?%{O_SUPPORT_CONTACT:ov_support_contact}\|?%{WORD:ov_support_state}\}
+ONEVIEW_CHILD_ALERTS %{O_CHILD_ALERT:oneview_child_alerts}
+
+ONEVIEW_ALERT_INFO    \[%{NUMBER:oneview_alert_id}\|?%{WORD:oneview_event_health}\|?%{WORD:oneview_alert_type}\|?%{WORD:oneview_asigned_user}\|(None|%{ONEVIEW_SERVICE_INFO:oneview_support_info})\|\[%{ONEVIEW_CHILD_ALERTS}\]]
+
+# Server Profile Events
+OV_SP_CRITICAL  \<2\> %{ONEVIEW_TIMESTAMP} %{ONEVIEW_HOSTNAME} oneview server-profiles \[%{ONEVIEW_RESOURCE_NAME}\] %{ONEVIEW_ALERT_INFO:alert_info} %{ONEVIEW_EVENT_MSG}
+OV_SP_NORMAL    \<6\> %{ONEVIEW_TIMESTAMP} %{ONEVIEW_HOSTNAME} oneview server-profiles \[%{ONEVIEW_RESOURCE_NAME}\] %{ONEVIEW_ALERT_INFO:alert_info} %{ONEVIEW_EVENT_MSG}
+OV_SP_WARNING   \<4\> %{ONEVIEW_TIMESTAMP} %{ONEVIEW_HOSTNAME} oneview server-profiles \[%{ONEVIEW_RESOURCE_NAME}\] %{ONEVIEW_ALERT_INFO:alert_info} %{ONEVIEW_EVENT_MSG}
+OV_SP_ALERTS    \<%{ONEVIEW_ALERT_SEQ}\> %{ONEVIEW_TIMESTAMP} %{ONEVIEW_HOSTNAME} oneview server-profiles \[%{ONEVIEW_RESOURCE_NAME}\] %{ONEVIEW_ALERT_INFO:alert_info} %{ONEVIEW_EVENT_MSG}
+
+# Server Hardware Events
+OV_SH_CRITICAL  \<2\> %{ONEVIEW_TIMESTAMP} %{ONEVIEW_HOSTNAME} oneview server-hardware \[%{ONEVIEW_RESOURCE_NAME}\] %{ONEVIEW_ALERT_INFO:alert_info} %{ONEVIEW_EVENT_MSG}
+OV_SH_NORMAL    \<6\> %{ONEVIEW_TIMESTAMP} %{ONEVIEW_HOSTNAME} oneview server-hardware \[%{ONEVIEW_RESOURCE_NAME}\] %{ONEVIEW_ALERT_INFO:alert_info} %{ONEVIEW_EVENT_MSG}
+OV_SH_WARNING   \<4\> %{ONEVIEW_TIMESTAMP} %{ONEVIEW_HOSTNAME} oneview server-hardware \[%{ONEVIEW_RESOURCE_NAME}\] %{ONEVIEW_ALERT_INFO:alert_info} %{ONEVIEW_EVENT_MSG}
+OV_SH_ALERTS    \<%{ONEVIEW_ALERT_SEQ}\> %{ONEVIEW_TIMESTAMP} %{ONEVIEW_HOSTNAME} oneview server-hardware \[%{ONEVIEW_RESOURCE_NAME}\] %{ONEVIEW_ALERT_INFO:alert_info} %{ONEVIEW_EVENT_MSG}
+
+# Interconnect Events
+OV_IN_CRITICAL  \<2\> %{ONEVIEW_TIMESTAMP} %{ONEVIEW_HOSTNAME} oneview interconnects \[%{ONEVIEW_RESOURCE_NAME}\] %{ONEVIEW_ALERT_INFO:alert_info} %{ONEVIEW_EVENT_MSG}
+OV_IN_NORMAL    \<6\> %{ONEVIEW_TIMESTAMP} %{ONEVIEW_HOSTNAME} oneview interconnects \[%{ONEVIEW_RESOURCE_NAME}\] %{ONEVIEW_ALERT_INFO:alert_info} %{ONEVIEW_EVENT_MSG}
+OV_IN_WARNING   \<4\> %{ONEVIEW_TIMESTAMP} %{ONEVIEW_HOSTNAME} oneview interconnects \[%{ONEVIEW_RESOURCE_NAME}\] %{ONEVIEW_ALERT_INFO:alert_info} %{ONEVIEW_EVENT_MSG}
+OV_IN_ALERTS    \<%{ONEVIEW_ALERT_SEQ}\> %{ONEVIEW_TIMESTAMP} %{ONEVIEW_HOSTNAME} oneview interconnects \[%{ONEVIEW_RESOURCE_NAME}\] %{ONEVIEW_ALERT_INFO:alert_info} %{ONEVIEW_EVENT_MSG}
+
+# All Critical Events
+OV_CRITICAL     \<2\> %{ONEVIEW_TIMESTAMP} %{ONEVIEW_HOSTNAME} oneview %{ONEVIEW_RESOURCE_TYPE} \[%{ONEVIEW_RESOURCE_NAME}\] %{ONEVIEW_ALERT_INFO:alert_info} %{ONEVIEW_EVENT_MSG}
+OV_ALL_ALERTS   \<%{ONEVIEW_ALERT_SEQ}\> %{ONEVIEW_TIMESTAMP} %{ONEVIEW_HOSTNAME} oneview %{ONEVIEW_RESOURCE_TYPE} \[%{ONEVIEW_RESOURCE_NAME}\] %{ONEVIEW_ALERT_INFO:alert_info} %{ONEVIEW_EVENT_MSG}
+
+# Periodic Logs
+O_H_MODEL       [a-zA-Z0-9_\,\-\s\/]+
+O_PORT_NUM      [XQd][0-9]+[:0-9]*
+O_PORT_TX	[0-9]+
+O_PORT_RX	[0-9]+
+O_PORT_ADAPTER  [a-zA-Z0-9_\,\-\s\/\:]+
+O_POWER_VALUE   [0-9]+
+O_TEMP_VALUE    [0-9]+
+O_FREQ_VALUE    [0-9]+
+O_CPU_VALUE     [0-9]+
+O_POWER_CAP     [a-zA-Z0-9]+
+
+OV_HOST_MODEL   %{O_H_MODEL:host_model}
+OV_HOST_CONF    [a-zA-Z]+
+
+OV_POWER_STAT   %{O_H_MODEL:power_stat}
+OV_POWER_WATT   %{O_POWER_VALUE:power_watt}
+
+OV_PORT_NUM     %{O_PORT_NUM:ov_port_number}
+OV_PORT_TX	%{O_PORT_TX:ov_port_transmit_bytes}
+OV_PORT_RX	%{O_PORT_RX:ov_port_receive_bytes}
+OV_PORT_ERR_TX	%{O_PORT_TX:ov_port_transmit_errors}
+OV_PORT_ERR_RX	%{O_PORT_RX:ov_port_receive_errors}
+OV_PORT_SPEED   %{O_H_MODEL:ov_port_speed}
+OV_PORT_ADAPT   %{O_PORT_ADAPTER:ov_adapter_port}
+
+OV_SERVER_TEMP       %{O_TEMP_VALUE:ov_server_temperature}
+OV_SERVER_AVG_POWER  %{O_POWER_VALUE:ov_server_avg_power}
+OV_SERVER_CPU_FREQ   %{O_FREQ_VALUE:ov_server_cpu_frequency}
+OV_SERVER_CPU_UTIL   %{O_FREQ_VALUE:ov_server_cpu_util}
+OV_SERVER_PEAK_POWER %{O_POWER_VALUE:ov_server_peak_power}
+OV_SERVER_POWER_CAP  %{O_POWER_CAP:ov_server_power_cap}
+
+OV_ENC_TEMP       %{O_TEMP_VALUE:ov_enclosure_temperature}
+OV_ENC_AVG_POWER  %{O_POWER_VALUE:ov_enclosure_avg_power}
+OV_ENC_PEAK_POWER %{O_POWER_VALUE:ov_enclosure_peak_power}
+
+OV_HOST_STATS   \<%{ONEVIEW_ALERT_SEQ}\> %{ONEVIEW_TIMESTAMP} %{ONEVIEW_HOSTNAME} oneview NodeStats \[%{ONEVIEW_RESOURCE_NAME}\] \[%{OV_HOST_MODEL}\|?%{OV_HOST_CONF}\|None\]
+
+OV_PORT_STATS   \<%{ONEVIEW_ALERT_SEQ}\> %{ONEVIEW_TIMESTAMP} %{ONEVIEW_HOSTNAME} oneview PortStats \[%{ONEVIEW_RESOURCE_NAME}\] \[%{OV_PORT_NUM}\|Transmit=%{OV_PORT_TX}\|?Receive=%{OV_PORT_RX}\|TransmitErr=%{OV_PORT_ERR_TX}\|?ReceiveErr=%{OV_PORT_ERR_RX}\|Speed=%{OV_PORT_SPEED}\|?AdaptorPort=%{OV_PORT_ADAPT}\]
+
+OV_SERVER_STATS \<%{ONEVIEW_ALERT_SEQ}\> %{ONEVIEW_TIMESTAMP} %{ONEVIEW_HOSTNAME} oneview ServerStats \[%{ONEVIEW_RESOURCE_NAME}\] \[AmbientTemperature=%{OV_SERVER_TEMP} dec C\|?AveragePower=%{OV_SERVER_AVG_POWER} watts\|?CpuAverageFreq=%{OV_SERVER_CPU_FREQ} Hz\|?CpuUtilization=%{OV_SERVER_CPU_UTIL} \%\|?PeakPower=%{OV_SERVER_PEAK_POWER} watts\|?PowerCap=%{OV_SERVER_POWER_CAP}?%{GREEDYDATA:msg}\]
+
+OV_ENCLOSURE_STATS  \<%{ONEVIEW_ALERT_SEQ}\> %{ONEVIEW_TIMESTAMP} %{ONEVIEW_HOSTNAME} oneview EnclosureStats \[%{ONEVIEW_RESOURCE_NAME}\] \[AmbientTemperature=%{OV_ENC_TEMP} dec C\|?AveragePower=%{OV_ENC_AVG_POWER} watts\|?PeakPower=%{OV_ENC_PEAK_POWER} watts\]

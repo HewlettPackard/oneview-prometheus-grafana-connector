@@ -1,0 +1,262 @@
+global:
+    config_version: 2
+
+input:
+    type: file
+    path: /grok/logs/oneview_syslog
+    readall: true # Read from the beginning of the file? False means we start at the end of the file and read only new lines.
+
+grok:
+    patterns_dir: ./patterns
+
+metrics:
+    # Metrics for Oneview Server Profile
+    - type: counter
+      name: ov_serverprofile_critical_total
+      help: Total number of server profiles critical events in oneview
+      match: '%{OV_SP_CRITICAL}'
+      labels:
+          oneview_hostname: '{{.oneview_hostname}}'
+          oneview_alert_type: '{{.oneview_alert_type}}'
+
+    - type: counter
+      name: ov_serverprofile_warning_total
+      help: Total number of server profile warnings in oneview
+      match: '%{OV_SP_WARNING}'
+      labels:
+          oneview_hostname: '{{.oneview_hostname}}'
+          oneview_alert_type: '{{.oneview_alert_type}}'
+
+    - type: gauge
+      name: ov_serverprofile_critical_gauge
+      help: Total active server profile critical alerts in oneview
+      match: '%{OV_SP_CRITICAL}'
+      value: '{{if eq .oneview_alert_type "Active"}}1{{else}}-1{{end}}'
+      cumulative: true
+      labels:
+          resource_name: '{{.oneview_resource_name}}'
+          oneview_hostname: '{{.oneview_hostname}}'
+
+    - type: gauge
+      name: ov_serverprofile_critical_messages_gauge
+      help: Messages of all server profile critical events
+      match: '%{OV_SP_CRITICAL}'
+      value: '{{if eq .oneview_alert_type "Cleared"}}-1{{else}}1{{end}}'
+      cumulative: true
+      labels:
+          resource_name: '{{.oneview_resource_name}}'
+          message: '{{.oneview_msg}}'
+          oneview_hostname: '{{.oneview_hostname}}'
+
+    # Metrics for Oneview Server Hardware
+    - type: counter
+      name: ov_serverhardware_critical_total
+      help: Total number of server hardware critical events in oneview
+      match: '%{OV_SH_CRITICAL}'
+      labels:
+          oneview_hostname: '{{.oneview_hostname}}'
+          oneview_alert_type: '{{.oneview_alert_type}}'
+
+    - type: counter
+      name: ov_serverhardware_warnings_total
+      help: Total number of server hardware warnings in oneview
+      match: '%{OV_SH_WARNING}'
+      labels:
+          oneview_hostname: '{{.oneview_hostname}}'
+          oneview_alert_type: '{{.oneview_alert_type}}'
+
+    - type: gauge
+      name: ov_serverhardware_critical_gauge
+      help: Total active server hardware critical alerts in oneview
+      match: '%{OV_SH_CRITICAL}'
+      value: '{{if eq .oneview_alert_type "Active"}}1{{else}}-1{{end}}'
+      cumulative: true
+      labels:
+          resource_name: '{{.oneview_resource_name}}'
+          oneview_hostname: '{{.oneview_hostname}}'
+
+    - type: gauge
+      name: ov_serverhardware_critical_messages_gauge
+      help: Messages of all server hardware critical events
+      match: '%{OV_SH_CRITICAL}'
+      value: '{{if eq .oneview_alert_type "Cleared"}}-1{{else}}1{{end}}'
+      cumulative: true
+      labels:
+          resource_name: '{{.oneview_resource_name}}'
+          message: '{{.oneview_msg}}'
+          oneview_hostname: '{{.oneview_hostname}}'
+
+    # Metrics for Oneview Interconnects
+    - type: counter
+      name: ov_interconnect_critical_total
+      help: Total number of interconnect critical events in oneview
+      match: '%{OV_IN_CRITICAL}'
+      labels:
+          oneview_hostname: '{{.oneview_hostname}}'
+          oneview_alert_type: '{{.oneview_alert_type}}'
+
+    - type: counter
+      name: ov_interconnect_warning_total
+      help: Total number of interconnect warnings in oneview
+      match: '%{OV_IN_WARNING}'
+      labels:
+          oneview_hostname: '{{.oneview_hostname}}'
+          oneview_alert_type: '{{.oneview_alert_type}}'
+
+    - type: gauge
+      name: ov_interconnect_critical_gauge
+      help: Total active interconnect critical alerts in oneview
+      match: '%{OV_IN_CRITICAL}'
+      value: '{{if eq .oneview_alert_type "Active"}}1{{else}}-1{{end}}'
+      cumulative: true
+      labels:
+          resource_name: '{{.oneview_resource_name}}'
+          oneview_hostname: '{{.oneview_hostname}}'
+
+    - type: gauge
+      name: ov_interconnect_critical_messages_gauge
+      help: Messages of all interconnect critical events
+      match: '%{OV_IN_CRITICAL}'
+      value: '{{if eq .oneview_alert_type "Cleared"}}-1{{else}}1{{end}}'
+      cumulative: true
+      labels:
+          resource_name: '{{.oneview_resource_name}}'
+          message: '{{.oneview_msg}}'
+          oneview_hostname: '{{.oneview_hostname}}'
+
+    # Metrics for Oneview all critical events
+    - type: gauge
+      name: ov_all_critical_messages_gauge
+      help: Status of all the critical events from oneview
+      match: '%{OV_CRITICAL}'
+      value: '{{if eq .oneview_alert_type "Cleared"}}-1{{else}}1{{end}}'
+      cumulative: true
+      labels:
+          resource_type: '{{.oneview_resource_type}}'
+          resource_name: '{{.oneview_resource_name}}'
+          message: '{{.oneview_msg}}'
+          oneview_hostname: '{{.oneview_hostname}}'
+
+    # Metrics for Oneview Service Info of Critical Events
+    - type: gauge
+      name: ov_service_events_gauge
+      help: Status of all oneview support open tickets
+      match: '%{OV_ALL_ALERTS}'
+      value: '{{if eq .ov_support_state "Open"}}1{{else}}{{if eq .ov_support_state "Closed"}}-1{{else}}0{{end}}{{end}}'
+      cumulative: true
+      labels:
+          resource_type: '{{.oneview_resource_type}}'
+          resource_name: '{{.oneview_resource_name}}'
+          oneview_hostname: '{{.oneview_hostname}}'
+          ov_support_case_id: '{{.ov_support_case_id}}'
+          ov_support_contact: '{{.ov_support_contact}}'
+          ov_support_state: '{{.ov_support_state}}'
+
+    # Metrics for Oneview Enclosure Statistics
+    - type: gauge
+      name: ov_enclosure_temperature_gauge
+      help: Temperature of the oneview enclosure/frame
+      match: '%{OV_ENCLOSURE_STATS}'
+      value: '{{ .ov_enclosure_temperature }}'
+      cumulative: false
+      labels:
+          resource_name: '{{.oneview_resource_name}}'
+          oneview_hostname: '{{.oneview_hostname}}'
+
+    - type: gauge
+      name: ov_enclosure_avg_power_gauge
+      help: Average power of the oneview enclosure/frame
+      match: '%{OV_ENCLOSURE_STATS}'
+      value: '{{ .ov_enclosure_avg_power }}'
+      cumulative: false
+      labels:
+          resource_name: '{{.oneview_resource_name}}'
+          oneview_hostname: '{{.oneview_hostname}}'
+
+    - type: gauge
+      name: ov_enclosure_peek_power_gauge
+      help: Peek power of the oneview enclosure/frame
+      match: '%{OV_ENCLOSURE_STATS}'
+      value: '{{ .ov_enclosure_peak_power }}'
+      cumulative: false
+      labels:
+          resource_name: '{{.oneview_resource_name}}'
+          oneview_hostname: '{{.oneview_hostname}}'
+
+    # Metrics for Oneview Port Statistics
+    - type: gauge
+      name: ov_port_transmit_bytes_gauge
+      help: Total number of bytes transmitted on port
+      match: '%{OV_PORT_STATS}'
+      value: '{{ .ov_port_transmit_bytes }}'
+      cumulative: false
+      labels:
+          port: '{{.ov_port_number}}'
+          oneview_hostname: '{{.oneview_hostname}}'
+          oneview_interconnect: '{{.oneview_resource_name}}'
+
+    - type: gauge
+      name: ov_port_receive_bytes_gauge
+      help: Total number of bytes received on port
+      match: '%{OV_PORT_STATS}'
+      value: '{{ .ov_port_receive_bytes }}'
+      cumulative: false
+      labels:
+          port: '{{.ov_port_number}}'
+          oneview_hostname: '{{.oneview_hostname}}'
+          oneview_interconnect: '{{.oneview_resource_name}}'
+
+    - type: gauge
+      name: ov_port_transmit_error_gauge
+      help: Total number of errors transmitted on port
+      match: '%{OV_PORT_STATS}'
+      value: '{{ .ov_port_transmit_errors }}'
+      cumulative: true
+      labels:
+          port: '{{.ov_port_number}}'
+          oneview_hostname: '{{.oneview_hostname}}'
+          oneview_interconnect: '{{.oneview_resource_name}}'
+
+    - type: gauge
+      name: ov_port_receive_error_gauge
+      help: Total number of errors received on port
+      match: '%{OV_PORT_STATS}'
+      value: '{{ .ov_port_receive_errors }}'
+      cumulative: true
+      labels:
+          port: '{{.ov_port_number}}'
+          oneview_hostname: '{{.oneview_hostname}}'
+          oneview_interconnect: '{{.oneview_resource_name}}'
+
+    # Metrics for Server Temperature
+    - type: gauge
+      name: ov_server_temperature_gauge
+      help: Temperature of the server hardware
+      match: '%{OV_SERVER_STATS}'
+      value: '{{ .ov_server_temperature }}'
+      cumulative: false
+      labels:
+          server_hardware: '{{.oneview_resource_name}}'
+          oneview_hostname: '{{.oneview_hostname}}'
+
+    # Metrics for Server Average Power
+    - type: gauge
+      name: ov_server_avg_power_gauge
+      help: Average power of the server hardware
+      match: '%{OV_SERVER_STATS}'
+      value: '{{ .ov_server_avg_power }}'
+      cumulative: false
+      labels:
+          server_hardware: '{{.oneview_resource_name}}'
+          oneview_hostname: '{{.oneview_hostname}}'
+
+    # Metrics for Server Peak Power
+    - type: gauge
+      name: ov_server_peak_power_gauge
+      help: Peak power of the server hardware
+      match: '%{OV_SERVER_STATS}'
+      value: '{{ .ov_server_peak_power }}'
+      cumulative: false
+      labels:
+          server_hardware: '{{.oneview_resource_name}}'
+          oneview_hostname: '{{.oneview_hostname}}'

@@ -1,0 +1,15 @@
+{
+        "oneview_config": {
+                "host": "172.168.100.45",
+                "alias": "HPE-oneview-45",
+                "user": "Administrator",
+		"passwd": "UGFzc3dvcmRAMTIz",
+                "authLoginDomain": "LOCAL",
+                "action": "start",
+                "route": "scmb.alerts.#",
+                "alert_type": "Critical:Warning:Ok",
+                "refresh_interval": 600,
+                "alert_hardware_category": "server-hardware:enclosures:interconnects:logical-interconnects:sas-interconnects"
+        },
+        "logging_level": "DEBUG"
+}

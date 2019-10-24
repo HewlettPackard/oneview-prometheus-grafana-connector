@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: oneview-conf
+  labels:
+    name: oneview-conf
+  namespace: default
+data:
+  config.json: |-
+    {
+        "oneview_config": {
+                "host": "172.168.100.45",
+                "alias": "HPE-OneView-45",
+                "user": "Administrator",
+                "passwd": "",
+                "authLoginDomain": "LOCAL",
+                "route": "scmb.alerts.#",
+                "alert_type": "Critical:Warning:Ok",
+                "alert_hardware_category": "server-hardware:enclosures:interconnects:logical-interconnects:sas-interconnects"
+        },
+        "logging_level": "DEBUG"
+    }
