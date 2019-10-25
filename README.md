@@ -2,7 +2,7 @@
 
 
 ## Overview
-This repo contains code and configuration for connector for HPE hardware and prometheus and grafana.
+This repo contains code and configuration for connector between HPE hardware and prometheus/grafana.
 The goal of the connector is monitor hardware alerts using prometheus and grafana. 
 
 ## Components of connector
