@@ -3,7 +3,7 @@
                 "host": "172.168.100.45",
                 "alias": "HPE-oneview-45",
                 "user": "Administrator",
-		"passwd": "UGFzc3dvcmRAMTIz",
+		"passwd": "passwd123",
                 "authLoginDomain": "LOCAL",
                 "action": "start",
                 "route": "scmb.alerts.#",

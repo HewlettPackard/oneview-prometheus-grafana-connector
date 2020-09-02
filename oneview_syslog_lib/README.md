@@ -26,7 +26,7 @@ docker build -t <org name>/grok-exporter .
 Then make sure you have created pk8s pv and pvc that are common directory. After then you can deployment the service.
 
 ### How to deploy as helm chart
-edit the config map yaml file  ( look for the host directory mounth path, create a directory for the logs )
+edit the config map, secrets yaml file  ( look for the host directory mounth path, create a directory for the logs )
 and then rub below command
 ```
 helm install helm/oneview-syslog-lib
@@ -135,7 +135,7 @@ Follow [install docker](https://docs.docker.com/install/linux/docker-ee/centos/)
 
 3. Start docker container
 
-        $ sudo docker run -d -v $PWD:/plugin --env-file docker_env --name ov_connector oneview-syslog-lib
+        $ sudo docker run -d -v $PWD:/plugin -v $PWD/config.json:/conf/config.json --env-file docker_env --name ov_connector oneview-syslog-lib
 
         At the start of this container plugin, password for oneview is prompted. Once you enter password, script will
         run continuously and listen for oneview alerts and converts alerts message into syslog message

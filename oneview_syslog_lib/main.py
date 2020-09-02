@@ -76,16 +76,21 @@ def main():
         logging.getLogger().setLevel(logLevel)
 
     # Get OneView Password
-    if not oneviewDetails.get('passwd'):
-        if "OV_PASSWORD" in environ:
-            oneviewDetails["passwd"] = environ["OV_PASSWORD"]
-        else:
-            raise Exception("Missing oneview password. Please define " +
-                            "the password in the input file or " +
-                            "export OV_PASSWORD")
-    else:
-        password = base64.b64decode(oneviewDetails['passwd'].encode('utf-8'))
-        oneviewDetails['passwd'] = password.decode('utf-8')
+    # if not oneviewDetails.get('passwd'):
+    #     if "OV_PASSWORD" in environ:
+    #         oneviewDetails["passwd"] = environ["OV_PASSWORD"]
+    #     else:
+    #         raise Exception("Missing oneview password. Please define " +
+    #                         "the password in the input file or " +
+    #                         "export OV_PASSWORD")
+    # else:
+    #     password = base64.b64decode(oneviewDetails['passwd'].encode('utf-8'))
+    #     oneviewDetails['passwd'] = password.decode('utf-8')
+
+    # will come k8s secrets
+    # for running normal python outside of k8s, password can come from config.json
+    if "OV_PASSWORD" in environ:
+        oneviewDetails["passwd"] = environ["OV_PASSWORD"]
 
     conf.validate_input(oneviewDetails)
 
