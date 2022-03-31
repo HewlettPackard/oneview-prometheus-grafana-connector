@@ -87,6 +87,16 @@ metrics:
           message: '{{.oneview_msg}}'
           oneview_hostname: '{{.oneview_hostname}}'
 
+    - type: gauge
+      name: ov_serverhardware_current_critical_gauge
+      help: Current active server hardware critical alerts in oneview
+      match: '%{OV_SH_CRITICAL}'
+      value: '{{if eq .oneview_alert_type "Cleared"}}0{{else}}1{{end}}'
+      labels:
+          resource_name: '{{.oneview_resource_name}}'
+          oneview_hostname: '{{.oneview_hostname}}'
+          oneview_alert_id: '{{.oneview_alert_id}}'
+
     # Metrics for Oneview Interconnects
     - type: counter
       name: ov_interconnect_critical_total
