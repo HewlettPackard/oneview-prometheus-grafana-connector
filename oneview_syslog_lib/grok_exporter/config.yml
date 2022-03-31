@@ -1,13 +1,14 @@
 global:
-    config_version: 2
+    config_version: 3
 
 input:
     type: file
     path: /grok/logs/oneview_syslog
     readall: true # Read from the beginning of the file? False means we start at the end of the file and read only new lines.
 
-grok:
-    patterns_dir: /etc/grok_exporter/patterns
+imports:
+- type: grok_patterns
+  dir: /etc/grok_exporter/patterns
 
 metrics:
     # Metrics for Oneview Server Profile
@@ -260,3 +261,5 @@ metrics:
       labels:
           server_hardware: '{{.oneview_resource_name}}'
           oneview_hostname: '{{.oneview_hostname}}'
+server:
+  port: 9144

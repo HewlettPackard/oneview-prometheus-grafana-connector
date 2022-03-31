@@ -2,10 +2,10 @@ ARG REGISTRY=
 FROM ${REGISTRY}/spock_rockylinux:8.5-1
 LABEL Maintainer="um"
 LABEL Name="grok_exporter"
-LABEL Version="0.2.5"
+LABEL Version="v1.0.0.RC5"
 
-ENV GROK_ARCH="grok_exporter-0.2.5.linux-amd64"
-ENV GROK_VERSION="v0.2.5"
+ENV GROK_ARCH="grok_exporter-1.0.0.RC5.linux-amd64"
+ENV GROK_VERSION="v1.0.0.RC5"
 
 RUN dnf install -qy unzip
 RUN curl -s -O -L https://github.com/fstab/grok_exporter/releases/download/$GROK_VERSION/$GROK_ARCH.zip \
