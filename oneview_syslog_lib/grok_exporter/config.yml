@@ -7,7 +7,7 @@ input:
     readall: true # Read from the beginning of the file? False means we start at the end of the file and read only new lines.
 
 grok:
-    patterns_dir: ./patterns
+    patterns_dir: /etc/grok_exporter/patterns
 
 metrics:
     # Metrics for Oneview Server Profile
