@@ -1,7 +1,7 @@
 O_TIMESTAMP %{YEAR:year}-%{MONTHNUM:month}-%{MONTHDAY:day}[T]%{HOUR:hour}:?%{MINUTE:minute}:?%{SECOND:second}[Z]
 O_EVENT_MSG %{GREEDYDATA}
 O_EVENT_EXTRA_MSG \[%{GREEDYDATA}\]
-O_RESOURCE_NAME  [a-zA-Z0-9_\,\-\s\/]+
+O_RESOURCE_NAME  [a-zA-Z0-9_\,\-\s\/\.]+
 O_RESOURCE_TYPE  [a-zA-Z-]+
 O_IP_HOSTNAME    [a-z0-9.]+
 O_CHILD_ALERT    [0-9,]*
@@ -16,7 +16,7 @@ ONEVIEW_ALERT_URI   (%{URIPATH:oneview_alert_uri})
 ONEVIEW_EVENT_MSG   %{O_EVENT_MSG:oneview_msg}
 ONEVIEW_RESOURCE_TYPE %{O_RESOURCE_TYPE:oneview_resource_type}
 ONEVIEW_RESOURCE_NAME %{O_RESOURCE_NAME:oneview_resource_name}
-ONEVIEW_SERVICE_INFO  \{%{WORD:ov_support_case_id}\|?%{O_SUPPORT_CONTACT:ov_support_contact}\|?%{WORD:ov_support_state}\}
+ONEVIEW_SERVICE_INFO  \{%{DATA:ov_support_case_id}\|?%{O_SUPPORT_CONTACT:ov_support_contact}\|?%{WORD:ov_support_state}\}
 ONEVIEW_CHILD_ALERTS %{O_CHILD_ALERT:oneview_child_alerts}
 
 ONEVIEW_ALERT_INFO    \[%{NUMBER:oneview_alert_id}\|?%{WORD:oneview_event_health}\|?%{WORD:oneview_alert_type}\|?%{WORD:oneview_asigned_user}\|(None|%{ONEVIEW_SERVICE_INFO:oneview_support_info})\|\[%{ONEVIEW_CHILD_ALERTS}\]]
