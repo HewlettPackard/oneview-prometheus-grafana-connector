@@ -21,7 +21,7 @@ RUN curl -s -O -L https://github.com/fstab/grok_exporter/releases/download/$GROK
 COPY supervisord.conf /etc/
 COPY supervisord-grok-exporter.service /etc/supervisord.d/
 COPY config.yml /etc/grok_exporter/config.yml
-COPY oneview /etc/grok_exporter/patterns/oneview
+COPY patterns/oneview /etc/grok_exporter/patterns/oneview
 
 RUN chown -R grok:grok /etc/grok_exporter \
     && mkdir -p /var/log/supervisord \
