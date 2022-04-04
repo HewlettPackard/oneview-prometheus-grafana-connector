@@ -1,4 +1,5 @@
-FROM registry-ilm.prod.spock.bmwgroup.net/spock_rockylinux:8.5-1
+ARG REGISTRY= 
+FROM ${REGISTRY}/spock_rockylinux:8.5-1
 LABEL Maintainer="um"
 LABEL Name="grok_exporter"
 LABEL Version="v1.0.0.RC5"
